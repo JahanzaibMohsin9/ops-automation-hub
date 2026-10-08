@@ -1,0 +1,11 @@
+Vendor: Northbeam Ops
+Invoice Number: INV-1001
+Invoice Date: 2026-03-28
+Due Date: 2026-04-27
+Payment Terms: Net 30
+Subtotal: 2400.00
+Tax: 240.00
+Total: 2640.00
+
+Line Items
+- RevOps implementation sprint | Qty 1 | Unit Price 2400.00 | Total 2400.00

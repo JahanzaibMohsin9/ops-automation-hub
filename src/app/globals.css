@@ -1,0 +1,293 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f4f2;
+  --foreground: #1f1a14;
+  --surface: #ffffff;
+  --surface-muted: #f5f5f4;
+  --border: rgba(28, 25, 23, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f0e0d;
+    --foreground: #f5f0e8;
+    --surface: #1c1a17;
+    --surface-muted: #252220;
+    --border: rgba(255, 255, 255, 0.08);
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+a,
+button {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* ── Global focus ring (WCAG 2.1 AA) ───────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
+
+/* ── Indeterminate shimmer for upload progress ──────────────────────────── */
+@keyframes progress-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.progress-shimmer {
+  background: linear-gradient(
+    90deg,
+    #e7e5e4 25%,
+    #d6d3d1 50%,
+    #e7e5e4 75%
+  );
+  background-size: 200% 100%;
+  animation: progress-shimmer 1.4s ease infinite;
+}
+
+/* ── Landing page pipeline card entrance animation ──────────────────────── */
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up-fade 0.5s ease both;
+}
+
+@keyframes pulse-border {
+  0% { border-color: rgba(245, 158, 11, 0.4); }
+  50% { border-color: rgba(245, 158, 11, 1); }
+  100% { border-color: rgba(245, 158, 11, 0.4); }
+}
+
+.animate-pulse-border {
+  animation: pulse-border 1.5s ease-in-out infinite;
+}
+
+
+.app-compact {
+  --surface-shadow: 0 1px 2px rgba(28, 25, 23, 0.06);
+  --surface-shadow-hover: 0 8px 18px rgba(28, 25, 23, 0.08);
+}
+
+.app-compact :where(section, article, aside, div, label, a, button)[class*="rounded-["],
+.app-compact :where(section, article, aside, div, label, a, button)[class*="rounded-2xl"],
+.app-compact :where(section, article, aside, div, label, a, button)[class*="rounded-xl"],
+.app-compact :where(input, select, textarea)[class*="rounded-["],
+.app-compact :where(input, select, textarea)[class*="rounded-2xl"],
+.app-compact :where(input, select, textarea)[class*="rounded-xl"] {
+  border-radius: 8px !important;
+}
+
+.app-compact :where(section, article, aside, div, label, a, button)[class*="shadow-"] {
+  box-shadow: var(--surface-shadow) !important;
+}
+
+.app-compact :where(a, button, label)[class*="hover:shadow-"]:hover {
+  box-shadow: var(--surface-shadow-hover) !important;
+}
+
+.app-compact :where(section, article, div, label)[class~="p-12"],
+.app-compact :where(section, article, div, label)[class~="p-10"],
+.app-compact :where(section, article, div, label)[class~="p-8"],
+.app-compact :where(section, article, div, label)[class*="md:p-12"] {
+  padding: 1.25rem !important;
+}
+
+.app-compact :where(section, article, div, label)[class~="p-7"],
+.app-compact :where(section, article, div, label)[class~="p-6"],
+.app-compact :where(section, article, div, label)[class~="p-5"] {
+  padding: 1rem !important;
+}
+
+.app-compact :where(section, article, div)[class~="py-24"],
+.app-compact :where(section, article, div)[class~="py-20"],
+.app-compact :where(section, article, div)[class~="py-16"],
+.app-compact :where(section, article, div)[class~="py-12"] {
+  padding-top: 2rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.app-compact :where(div, section, form)[class~="gap-10"],
+.app-compact :where(div, section, form)[class~="gap-8"] {
+  gap: 1rem !important;
+}
+
+.app-compact :where(div, section, form)[class~="gap-6"] {
+  gap: 0.875rem !important;
+}
+
+.app-compact :where(div)[class~="space-y-10"] > :not([hidden]) ~ :not([hidden]),
+.app-compact :where(div)[class~="space-y-8"] > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1rem !important;
+}
+
+.app-compact :where(div)[class~="space-y-6"] > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.875rem !important;
+}
+
+.app-compact :where(div, section)[class~="mt-16"],
+.app-compact :where(div, section)[class~="mt-12"],
+.app-compact :where(div, section)[class~="mt-10"],
+.app-compact :where(div, section)[class~="mt-8"] {
+  margin-top: 1rem !important;
+}
+
+.app-compact :where(div, section)[class~="pb-12"],
+.app-compact :where(div, section)[class~="pb-10"],
+.app-compact :where(div, section)[class~="pb-8"] {
+  padding-bottom: 1.5rem !important;
+}
+
+.app-compact :where(div, label)[class*="min-h-["] {
+  min-height: 10rem !important;
+}
+
+.app-compact :where(div)[class~="h-20"],
+.app-compact :where(div)[class~="w-20"],
+.app-compact :where(div)[class~="h-16"],
+.app-compact :where(div)[class~="w-16"] {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+}
+
+.app-compact .text-5xl {
+  font-size: 2rem !important;
+  line-height: 2.35rem !important;
+}
+
+.app-compact .text-4xl {
+  font-size: 1.75rem !important;
+  line-height: 2.1rem !important;
+}
+
+.app-compact .text-3xl {
+  font-size: 1.5rem !important;
+  line-height: 1.9rem !important;
+}
+
+.app-compact .text-2xl {
+  font-size: 1.25rem !important;
+  line-height: 1.6rem !important;
+}
+
+.app-compact table th {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+
+.app-compact table td {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+
+/* ── Toast notifications ─────────────────────────────────────────────────── */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+}
+
+.toast-enter {
+  animation: toast-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.toast-exit {
+  animation: toast-out 0.18s ease-in both;
+}
+
+/* ── Confirm modal ───────────────────────────────────────────────────────── */
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-backdrop-enter {
+  animation: modal-backdrop-in 0.18s ease both;
+}
+
+.modal-enter {
+  animation: modal-in 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Page content fade-in ────────────────────────────────────────────────── */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-enter {
+  animation: page-fade-in 0.3s ease both;
+}

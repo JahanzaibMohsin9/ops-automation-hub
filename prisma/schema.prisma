@@ -1,0 +1,411 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Workspace {
+  id                   String                  @id @default(cuid())
+  clerkOrgId           String                  @unique
+  name                 String
+  slug                 String                  @unique
+  plan                 WorkspacePlan           @default(free)
+  leadScoringCriteria  String?
+  createdAt            DateTime                @default(now())
+  approvalActions      ApprovalAction[]
+  auditLogs            AuditLog[]
+  crmContactSyncs      CRMContactSync[]
+  documents            Document[]
+  documentPages        DocumentPage[]
+  extractedFields      ExtractedField[]
+  extractedRecords     ExtractedRecord[]
+  integrationConnections IntegrationConnection[]
+  leadSubmissionAttempts LeadSubmissionAttempt[]
+  leadEnrichments      LeadEnrichment[]
+  salesAssistArtifacts SalesAssistArtifact[]
+  leadScores           LeadScore[]
+  leadSources          LeadSource[]
+  leads                Lead[]
+  reviewTasks          ReviewTask[]
+}
+
+model AuditLog {
+  id           String    @id @default(cuid())
+  workspaceId  String
+  actorUserId  String?
+  eventType    String
+  entityType   String
+  entityId     String?
+  metadataJson Json?
+  createdAt    DateTime  @default(now())
+  workspace    Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt(sort: Desc)])
+  @@index([workspaceId, eventType])
+}
+
+model LeadSource {
+  id         String         @id @default(cuid())
+  workspaceId String
+  type       LeadSourceType
+  name       String
+  config     Json?
+  createdAt  DateTime       @default(now())
+  leads      Lead[]
+  workspace  Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, type, name])
+  @@index([workspaceId, createdAt(sort: Desc)])
+}
+
+model Lead {
+  id                  String              @id @default(cuid())
+  workspaceId         String
+  leadSourceId        String
+  fullName            String
+  email               String
+  phone               String?
+  companyName         String
+  companyDomain       String?
+  jobTitle            String?
+  industry            String?
+  employeeRange       String?
+  rawPayloadJson      Json?
+  status              LeadStatus          @default(new)
+  processingStatus    String?
+  processingRunId     String?
+  processingError     String?
+  processedAt         DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  crmContactSyncs     CRMContactSync[]
+  enrichments         LeadEnrichment[]
+  salesAssistArtifacts SalesAssistArtifact[]
+  score               LeadScore?
+  leadSource          LeadSource          @relation(fields: [leadSourceId], references: [id], onDelete: Restrict)
+  workspace           Workspace           @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt(sort: Desc)])
+  @@index([workspaceId, status])
+  @@index([workspaceId, processingStatus])
+}
+
+model LeadSubmissionAttempt {
+  id          String    @id @default(cuid())
+  workspaceId String
+  ipAddress   String
+  createdAt   DateTime  @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, ipAddress, createdAt(sort: Desc)])
+}
+
+model LeadEnrichment {
+  id             String                 @id @default(cuid())
+  leadId         String
+  workspaceId    String
+  provider       String
+  rawPayloadJson Json?
+  normalizedData Json?
+  status         LeadEnrichmentStatus   @default(pending)
+  enrichedAt     DateTime               @default(now())
+  lead           Lead                   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  workspace      Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([leadId, enrichedAt(sort: Desc)])
+  @@index([workspaceId, status])
+}
+
+model LeadScore {
+  id              String       @id @default(cuid())
+  leadId          String       @unique
+  workspaceId     String
+  numericScore    Int
+  fitLabel        LeadFitLabel
+  reasoning       String
+  missingDataJson Json?
+  confidenceScore Float
+  modelUsed       String
+  promptVersion   String
+  tokenUsage      Int?
+  latencyMs       Int?
+  scoredAt        DateTime     @default(now())
+  lead            Lead         @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  workspace       Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, scoredAt(sort: Desc)])
+  @@index([workspaceId, fitLabel])
+}
+
+model SalesAssistArtifact {
+  id            String                  @id @default(cuid())
+  leadId        String
+  workspaceId   String
+  type          SalesAssistArtifactType
+  content       String
+  modelUsed     String
+  promptVersion String
+  tokenUsage    Int?
+  latencyMs     Int?
+  generatedAt   DateTime                @default(now())
+  lead          Lead                    @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  workspace     Workspace               @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([leadId, type, generatedAt(sort: Desc)])
+  @@index([workspaceId, type, generatedAt(sort: Desc)])
+}
+
+model IntegrationConnection {
+  id           String                    @id @default(cuid())
+  workspaceId  String
+  provider     IntegrationProvider
+  accessToken  String?
+  refreshToken String?
+  metadata     Json?
+  status       IntegrationConnectionStatus @default(disconnected)
+  connectedAt  DateTime?
+  disconnectedAt DateTime?
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+  workspace    Workspace                 @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, provider])
+  @@index([workspaceId, status])
+}
+
+model CRMContactSync {
+  id               String             @id @default(cuid())
+  workspaceId      String
+  leadId           String
+  provider         IntegrationProvider
+  externalContactId String?
+  syncStatus       CRMContactSyncStatus @default(pending)
+  errorMessage     String?
+  contactUrl       String?
+  lastSyncedAt     DateTime?
+  retryCount       Int                @default(0)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  lead             Lead               @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  workspace        Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([leadId, provider])
+  @@index([workspaceId, syncStatus])
+  @@index([workspaceId, leadId])
+}
+
+model Document {
+  id               String                   @id @default(cuid())
+  workspaceId      String
+  fileName         String
+  mimeType         String
+  documentType     DocumentType
+  storageKey       String
+  fileSize         Int
+  uploadStatus     DocumentUploadStatus     @default(uploading)
+  processingStatus DocumentProcessingStatus @default(pending)
+  processingRunId  String?
+  processingError  String?
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+  pages            DocumentPage[]
+  extractedRecords ExtractedRecord[]
+  workspace        Workspace                @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, storageKey])
+  @@index([workspaceId, createdAt(sort: Desc)])
+  @@index([workspaceId, processingStatus])
+  @@index([workspaceId, uploadStatus])
+}
+
+model DocumentPage {
+  id         String    @id @default(cuid())
+  documentId String
+  workspaceId String
+  pageNumber Int
+  rawText    String?
+  ocrUsed    Boolean   @default(false)
+  metadata   Json?
+  createdAt  DateTime  @default(now())
+  document   Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  workspace  Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, pageNumber])
+  @@index([workspaceId, createdAt(sort: Desc)])
+}
+
+model ExtractedRecord {
+  id              String           @id @default(cuid())
+  workspaceId     String
+  documentId      String
+  schemaType      DocumentType
+  extractionJson  Json
+  confidenceScore Float
+  requiresReview  Boolean          @default(false)
+  modelUsed       String
+  promptVersion   String
+  tokenUsage      Int?
+  latencyMs       Int?
+  extractedAt     DateTime         @default(now())
+  document        Document         @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  fields          ExtractedField[]
+  workspace       Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, extractedAt(sort: Desc)])
+  @@index([workspaceId, requiresReview])
+  @@index([workspaceId, schemaType, extractedAt(sort: Desc)])
+}
+
+model ExtractedField {
+  id                    String          @id @default(cuid())
+  extractedRecordId     String
+  workspaceId           String
+  fieldName             String
+  fieldValue            String?
+  confidenceScore       Float
+  sourceSnippet         String?
+  reviewerOverrideValue String?
+  isOverridden          Boolean         @default(false)
+  extractedRecord       ExtractedRecord @relation(fields: [extractedRecordId], references: [id], onDelete: Cascade)
+  workspace             Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([extractedRecordId])
+  @@index([workspaceId, confidenceScore])
+}
+
+model ReviewTask {
+  id               String           @id @default(cuid())
+  workspaceId      String
+  entityType       ReviewEntityType
+  entityId         String
+  status           ReviewTaskStatus @default(pending)
+  assignedToUserId String?
+  resolvedByUserId String?
+  resolvedAt       DateTime?
+  createdAt        DateTime         @default(now())
+  approvalActions  ApprovalAction[]
+  workspace        Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, status, createdAt(sort: Asc)])
+  @@index([workspaceId, entityType, status, createdAt(sort: Asc)])
+  @@index([workspaceId, entityType, entityId, status, createdAt(sort: Desc)])
+}
+
+model ApprovalAction {
+  id          String             @id @default(cuid())
+  reviewTaskId String
+  workspaceId String
+  action      ApprovalActionType
+  changesJson Json?
+  actorUserId String
+  createdAt   DateTime           @default(now())
+  reviewTask  ReviewTask         @relation(fields: [reviewTaskId], references: [id], onDelete: Cascade)
+  workspace   Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([reviewTaskId, createdAt(sort: Desc)])
+  @@index([workspaceId, createdAt(sort: Desc)])
+}
+
+enum WorkspacePlan {
+  free
+  pro
+  enterprise
+}
+
+enum LeadSourceType {
+  form
+  csv
+  webhook
+}
+
+enum LeadStatus {
+  new
+  enriching
+  enriched
+  scored
+  review_needed
+  qualified
+  low_priority
+  enrichment_failed
+  sync_failed
+}
+
+enum LeadEnrichmentStatus {
+  pending
+  success
+  failed
+  partial
+}
+
+enum LeadFitLabel {
+  high_fit
+  medium_fit
+  low_fit
+}
+
+enum SalesAssistArtifactType {
+  summary
+  followup
+  brief
+}
+
+enum IntegrationProvider {
+  hubspot
+  slack
+}
+
+enum IntegrationConnectionStatus {
+  disconnected
+  connected
+}
+
+enum CRMContactSyncStatus {
+  pending
+  synced
+  failed
+  retrying
+}
+
+enum DocumentType {
+  invoice
+  onboarding_form
+  agreement
+}
+
+enum DocumentUploadStatus {
+  uploading
+  uploaded
+  failed
+}
+
+enum DocumentProcessingStatus {
+  pending
+  extracting_text
+  ocr_required
+  extracting_structured
+  review_needed
+  approved
+  rejected
+  exported
+  failed
+}
+
+enum ReviewEntityType {
+  document
+  lead
+}
+
+enum ReviewTaskStatus {
+  pending
+  approved
+  rejected
+}
+
+enum ApprovalActionType {
+  approve
+  reject
+  edit_approve
+}

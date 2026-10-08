@@ -1,0 +1,15 @@
+Vendor: Northbeam Ops
+Invoice Number: INV-1002
+Invoice Date: 2026-04-01
+Due Date: 2026-05-01
+Payment Terms: Net 30
+Subtotal: 4800.00
+Tax: 480.00
+Total: 5280.00
+
+===PAGE===
+
+Line Items
+1 | Revenue operations advisory retainer | Qty 1 | Unit Price 3000.00 | Total 3000.00
+2 | Pipeline automation workshop | Qty 2 | Unit Price 900.00 | Total 1800.00
+Notes: Includes implementation handoff and reporting templates.

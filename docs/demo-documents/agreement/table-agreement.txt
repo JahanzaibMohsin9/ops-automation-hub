@@ -1,0 +1,12 @@
+Statement of Work
+Party A: Northbeam Ops
+Party B: Maple Freight
+Effective Date: 2026-04-08
+Expiration Date: 2026-10-08
+Payment Schedule: 50 percent upfront, 50 percent at launch
+Total Value: 18000
+
+Deliverables Table
+Week 1 | Discovery and data audit
+Week 2 | Dashboard implementation
+Week 3 | HubSpot workflow rollout

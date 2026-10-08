@@ -1,0 +1,48 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1012 >>
+stream
+BT /F1 20 Tf 56 760 Td (Northbeam Ops) Tj ET
+BT /F1 16 Tf 56 742 Td (Invoice) Tj ET
+BT /F1 11 Tf 56 724 Td () Tj ET
+BT /F1 11 Tf 56 706 Td (Bill To: Riverstone Health Partners) Tj ET
+BT /F1 11 Tf 56 688 Td (Invoice Number: NB-2026-041) Tj ET
+BT /F1 11 Tf 56 670 Td (Invoice Date: 2026-04-18) Tj ET
+BT /F1 11 Tf 56 652 Td (Due Date: 2026-05-02) Tj ET
+BT /F1 11 Tf 56 634 Td () Tj ET
+BT /F1 11 Tf 56 616 Td (Revenue intake workflow audit...............$4,800.00) Tj ET
+BT /F1 11 Tf 56 598 Td (Lead routing automation design..............$3,250.00) Tj ET
+BT /F1 11 Tf 56 580 Td (Document review queue setup.................$2,150.00) Tj ET
+BT /F1 11 Tf 56 562 Td () Tj ET
+BT /F1 11 Tf 56 544 Td (Subtotal....................................$10,200.00) Tj ET
+BT /F1 11 Tf 56 526 Td (Tax............................................$816.00) Tj ET
+BT /F1 11 Tf 56 508 Td (Total.......................................$11,016.00) Tj ET
+BT /F1 11 Tf 56 490 Td () Tj ET
+BT /F1 11 Tf 56 472 Td (Payment Terms: Net 14) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001304 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1374
+%%EOF
